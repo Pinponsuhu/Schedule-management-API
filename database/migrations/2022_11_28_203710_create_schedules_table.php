@@ -15,12 +15,13 @@ return new class extends Migration
     {
         Schema::create('schedules', function (Blueprint $table) {
             $table->id();
-            $table->string('status');
             $table->string('title');
             $table->longText('description');
-            $table->date('scheduled_date');
-            $table->time('from');
-            $table->time('to');
+            $table->timestamp('from');
+            $table->timestamp('to');
+            $table->smallInteger('status')->default(3);
+            $table->bigInteger('added_by')->unsigned()->nullable();
+            $table->foreign('added_by')->references('id')->on('users')->nullOnDelete();
             $table->timestamps();
         });
     }

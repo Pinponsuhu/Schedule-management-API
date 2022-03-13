@@ -13,5 +13,23 @@ class Schedule extends Model
 
     protected $primaryKey = 'id';
 
-    protected $fillable = ['title','description','scheduled_date','from','to'];
+    protected $fillable = ['title', 'description', 'added_by', 'status', 'from', 'to'];
+
+    protected $hidden = [
+        'added_by'
+    ];
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'from' => 'datetime',
+        'to' => 'datetime',
+    ];
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'added_by');
+    }
 }

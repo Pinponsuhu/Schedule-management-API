@@ -6,60 +6,71 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    public function register(Request $request){
-        $user = $request->validate([
-            'firstname'=> 'required',
-            'lastname' => 'required',
-            'pin' => 'required|digits:8|numeric',
-            'role' => 'required|unique:users,role',
+    public function register(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'pin' => 'required|digits:6|numeric',
+            'role' => 'required',
         ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation errors',
+                'data' => $validator->errors(),
+            ], 422);
+        }
 
-        $user = new User;
-        $user->firstname = $request->firstname;
-        $user->lastname = $request->lastname;
-        $user->role = $request->role;
-        $user->pin = Hash::make($request->pin);
-        $user->save();
+        $userWithPinExists = User::where('pin', $request->pin)->exists();
+        if ($userWithPinExists) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User with this PIN already exists.',
+            ], 422);
+        }
 
-        $token = $user->createToken('Auth_Token')->accessToken;
+        $user = User::create($request->all());
+
         return response()->json([
-            'data'=> [
-                'messsage' => 'Account created Successfully',
-                'access_token' => $token,
-            ]
-                ]);
+            'success' => true,
+            'data' => $user
+        ]);
     }
 
-    public function login(Request $request){
-        $request->validate([
-            'pin' => 'required|digits:8|numeric',
+    public function login(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'pin' => 'required|digits:6|numeric',
         ]);
-        // if(!auth()->attempt($request->only('pin'))){
-        //     return response()->json([
-        //             'message'=> 'invalid credentials'
-        //         ]);
-        // }
 
-         $user = Auth::login($request->pin);
-            // $user = Hash::check($request->pin);
-        return $user;
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation errors',
+                'data' => $validator->errors(),
+            ], 422);
+        }
+        $user = User::where('pin', $request->pin)->first();
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found.',
+            ], 404);
+        }
 
-        // $pin =  Hash::make($request->pin);
-        //     $user =  User::where('pin',$pin)->first();
-        //     return $pin;
+        Auth::login($user);
 
-        // $accessToken = auth()->user()->createToken('user_token')->accessToken;
-        // return response()->json([
-        //     'date'=> [
-        //         'message'=> 'Logged in Successfully',
-        //         'access_token' => $accessToken,
-        //         'attributes' => [
-        //             auth()->user()
-        //         ]
-        //     ]
-        // ]);
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'data' => $user,
+            ]
+        ]);
     }
 }

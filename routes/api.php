@@ -24,8 +24,9 @@ Route::get('/test', function(){
 });
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/schedules',[ScheduleController::class, 'create']);
-Route::get('/schedules',[ScheduleController::class, 'all']);
-Route::get('/schedules/{schedule}',[ScheduleController::class, 'show']);
-Route::delete('/schedules/{schedule}',[ScheduleController::class, 'destroy']);
-Route::put('/schedules/{schedule}',[ScheduleController::class, 'update']);
+Route::resource('/schedules',ScheduleController::class);
+//Route::post('/schedules',[ScheduleController::class, 'create']);
+//Route::get('/schedules',[ScheduleController::class, 'all']);
+//Route::get('/schedules/{schedule}',[ScheduleController::class, 'show']);
+//Route::delete('/schedules/{schedule}',[ScheduleController::class, 'destroy']);
+//Route::put('/schedules/{schedule}',[ScheduleController::class, 'update']);
