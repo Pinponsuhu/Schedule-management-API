@@ -26,6 +26,8 @@ class AuthController extends Controller
             ], 422);
         }
 
+        $request['pin'] = md5($request->pin);
+
         $userWithPinExists = User::where('pin', $request->pin)->exists();
         if ($userWithPinExists) {
             return response()->json([
@@ -55,6 +57,9 @@ class AuthController extends Controller
                 'data' => $validator->errors(),
             ], 422);
         }
+
+        $request['pin'] = md5($request->pin);
+
         $user = User::where('pin', $request->pin)->first();
         if (!$user) {
             return response()->json([
@@ -65,12 +70,9 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-
         return response()->json([
             'success' => true,
-            'data' => [
-                'data' => $user,
-            ]
+            'data' => $user
         ]);
     }
 }

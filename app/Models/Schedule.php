@@ -13,7 +13,7 @@ class Schedule extends Model
 
     protected $primaryKey = 'id';
 
-    protected $fillable = ['title', 'description', 'added_by', 'status', 'from', 'to'];
+    protected $fillable = ['title', 'description', 'location', 'added_by', 'status', 'from', 'to'];
 
     protected $hidden = [
         'added_by'
