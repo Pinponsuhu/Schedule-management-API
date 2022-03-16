@@ -21,7 +21,8 @@ class User extends Authenticatable
         'first_name',
         'last_name',
         'pin',
-        'role',
+        'level',
+        'firebase_token'
     ];
 
     /**
@@ -47,6 +48,6 @@ class User extends Authenticatable
 
     public function createdSchedules()
     {
-        return $this->hasMany(Schedule::class, 'added_by');
+        return $this->hasMany(Schedule::class, 'creator_id');
     }
 }

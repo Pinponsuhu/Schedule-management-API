@@ -21,8 +21,8 @@ return new class extends Migration
             $table->timestamp('to');
             $table->string('location')->nullable();
             $table->smallInteger('status')->default(3);
-            $table->bigInteger('added_by')->unsigned()->nullable();
-            $table->foreign('added_by')->references('id')->on('users')->nullOnDelete();
+            $table->bigInteger('creator_id')->unsigned()->nullable();
+            $table->foreign('creator_id')->references('id')->on('users')->nullOnDelete();
             $table->timestamps();
         });
     }

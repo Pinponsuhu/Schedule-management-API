@@ -15,8 +15,7 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'first_name' => 'required',
             'last_name' => 'required',
-            'pin' => 'required|digits:6|numeric',
-            'role' => 'required',
+            'pin' => 'required|digits:6|numeric'
         ]);
         if ($validator->fails()) {
             return response()->json([

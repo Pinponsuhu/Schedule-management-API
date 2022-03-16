@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 class Schedule extends Model
 {
@@ -13,11 +14,8 @@ class Schedule extends Model
 
     protected $primaryKey = 'id';
 
-    protected $fillable = ['title', 'description', 'location', 'added_by', 'status', 'from', 'to'];
+    protected $fillable = ['title', 'description', 'location', 'creator_id', 'status', 'from', 'to'];
 
-    protected $hidden = [
-        'added_by'
-    ];
     /**
      * The attributes that should be cast.
      *
@@ -30,6 +28,7 @@ class Schedule extends Model
 
     public function creator()
     {
-        return $this->belongsTo(User::class, 'added_by');
+        return $this->belongsTo(User::class, 'creator_id');
     }
+
 }

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Validator;
 
 class ScheduleController extends Controller
 {
-    public function index()
+    public function getSchedules(Request $request)
     {
         $perPage = 2;
         $page = 1;
@@ -20,25 +20,12 @@ class ScheduleController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function addOrEdit(Request $request)
     {
-        $eventExists = Schedule::where([
-            'title' => $request->title,
-            'from' => $request->from,
-            'to' => $request->to,
-        ])->exists();
-
-        if ($eventExists) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Event already exists.',
-            ], 422);
-        }
-
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'description' => 'required',
-            'added_by' => 'required|numeric|exists:users,id',
+            'creator_id' => 'required|numeric|exists:users,id',
             'from' => 'required|date',
             'to' => 'required|date',
         ]);
@@ -50,7 +37,7 @@ class ScheduleController extends Controller
             ], 422);
         }
 
-        $schedule = Schedule::create($request->all());
+        $schedule = Schedule::updateOrCreate(["id" => $request->id], $request->except(['created_at', 'updated_at']));
         $schedule->load('creator');
 
         return response()->json([
@@ -59,9 +46,9 @@ class ScheduleController extends Controller
         ]);
     }
 
-    public function show($schedule)
+    public function getASchedule($id)
     {
-        $schedule = Schedule::with('creator')->find($schedule);
+        $schedule = Schedule::with('creator_id')->find($id);
         if (!$schedule) {
             return response()->json([
                 'success' => false,
@@ -75,44 +62,9 @@ class ScheduleController extends Controller
         ]);
     }
 
-    public function update(Request $request, Schedule $schedule)
+    public function deleteASchedule($id)
     {
-        $schedule = Schedule::find($schedule->id);
-
-        if (!$schedule) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Schedule does not exist.',
-            ], 404);
-        }
-
-        $validator = Validator::make($request->all(), [
-            'title' => 'required',
-            'description' => 'required',
-            'from' => 'required|date',
-            'to' => 'required|date',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation errors',
-                'data' => $validator->errors(),
-            ], 422);
-        }
-
-        $schedule->update($request->all());
-        $schedule->load('creator');
-
-        return response()->json([
-            'success' => true,
-            'data' => $schedule
-        ]);
-    }
-
-    public function destroy(Schedule $schedule)
-    {
-        $schedule = Schedule::find($schedule->id);
+        $schedule = Schedule::find($id);
 
         if (!$schedule) {
             return response()->json([

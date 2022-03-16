@@ -19,14 +19,13 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::get('/test', function(){
+Route::get('/test', function () {
     return 'test';
 });
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::resource('/schedules',ScheduleController::class);
-//Route::post('/schedules',[ScheduleController::class, 'create']);
-//Route::get('/schedules',[ScheduleController::class, 'all']);
-//Route::get('/schedules/{schedule}',[ScheduleController::class, 'show']);
-//Route::delete('/schedules/{schedule}',[ScheduleController::class, 'destroy']);
-//Route::put('/schedules/{schedule}',[ScheduleController::class, 'update']);
+
+Route::post('/schedules', [ScheduleController::class, 'getSchedules']);
+Route::get('/schedules/{id}', [ScheduleController::class, 'getASchedule']);
+Route::post('/schedules/addOrEdit', [ScheduleController::class, 'addOrEdit']);
+Route::delete('/schedules/{id}', [ScheduleController::class, 'deleteASchedule']);
