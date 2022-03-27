@@ -10,7 +10,7 @@ class ScheduleController extends Controller
 {
     public function getSchedules(Request $request)
     {
-        $perPage = 2;
+        $perPage = 10;
         $page = 1;
         $schedule = Schedule::with('creator')->orderBy('created_at', 'desc')
             ->paginate($perPage, array('*'), 'page', $page);
